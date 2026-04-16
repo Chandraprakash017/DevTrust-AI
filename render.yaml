@@ -1,39 +1,35 @@
 services:
   # Backend Web Service
-  - type: web
-    name: devtrust-api
-    env: node
-    plan: free
-    region: ohio
-    buildCommand: npm install
-    startCommand: npm start
-    rootDirectory: server
-    envVars:
-      - key: NODE_VERSION
-        value: 20
-      - key: FRONTEND_URL
-        fromService:
-          name: devtrust-frontend
-          type: static_site
-          property: url
-      # Add other env vars here (GEMINI_API_KEY, etc.)
+    - type: web
+        name: devtrust-api
+            env: node
+                plan: free
+                    region: ohio
+                        buildCommand: npm install
+                            startCommand: npm start
+                                rootDirectory: server
+                                    envVars:
+                                          - key: NODE_VERSION
+                                                  value: 20
+                                                        - key: FRONTEND_URL
+                                                                fromService:
+                                                                          name: devtrust-frontend
+                                                                                    type: static
+                                                                                              property: url
 
-  # Frontend Static Site
-  - type: static_site
-    name: devtrust-frontend
-    env: static
-    plan: free
-    region: ohio
-    buildCommand: npm install && npm run build
-    publishPath: dist
-    rootDirectory: client
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          name: devtrust-api
-          type: web
-          property: url
+                                                                                                # Frontend Static Site
+                                                                                                  - type: static
+                                                                                                      name: devtrust-frontend
+                                                                                                          env: static
+                                                                                                              plan: free
+                                                                                                                  region: ohio
+                                                                                                                      buildCommand: npm install && npm run build
+                                                                                                                          publishPath: dist
+                                                                                                                              rootDirectory: client
+                                                                                                                                  envVars:
+                                                                                                                                        - key: VITE_API_URL
+                                                                                                                                                fromService:
+                                                                                                                                                          name: devtrust-api
+                                                                                                                                                                    type: web
+                                                                                                                                                                              property: url
+                                                                                                                                                                              
