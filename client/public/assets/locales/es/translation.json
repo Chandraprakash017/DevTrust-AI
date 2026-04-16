@@ -1,0 +1,11 @@
+{
+  "welcome": "Bienvenido a DevTrust",
+  "login_title": "DevTrust Pro",
+  "login_subtitle": "Elevando su viaje como freelancer.",
+  "email_placeholder": "Dirección de correo moderna",
+  "password_placeholder": "Contraseña segura",
+  "sign_in_button": "Iniciar sesión de forma segura",
+  "google_button": "Acceso directo con Google",
+  "new_here": "¿Nuevo en el ecosistema?",
+  "create_account": "Inicializar cuenta"
+}
