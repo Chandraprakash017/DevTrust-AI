@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FileText, Search, ShieldCheck, AlertCircle, CheckCircle2, XCircle, Gauge } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 
 export default function ATSScore() {
@@ -28,7 +28,7 @@ export default function ATSScore() {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/analyze-resume", formData, {
+      const res = await api.post("/api/ai/analyze-resume", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       setResult(res.data.analysis);

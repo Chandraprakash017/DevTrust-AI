@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
@@ -19,41 +19,41 @@ export default function AdminDashboard() {
   const [newTraining, setNewTraining] = useState({ title: "", description: "", level: "beginner" });
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/users/stats").then((r) => setStats(r.data)).catch(() => {});
-    axios.get("http://localhost:5000/api/tasks").then((r) => setTasks(r.data)).catch(() => {});
-    axios.get("http://localhost:5000/api/trainings").then((r) => setTrainings(r.data)).catch(() => {});
+    api.get("/api/users/stats").then((r) => setStats(r.data)).catch(() => {});
+    api.get("/api/tasks").then((r) => setTasks(r.data)).catch(() => {});
+    api.get("/api/trainings").then((r) => setTrainings(r.data)).catch(() => {});
     // Fetch all verifications via a custom query approach
     fetchVerifications();
   }, []);
 
   const fetchVerifications = () => {
     // Get all users to check verifications
-    axios.get("http://localhost:5000/api/users").then(() => {}).catch(() => {});
+    api.get("/api/users").then(() => {}).catch(() => {});
   };
 
   const addTask = async () => {
     if (!newTask.title) return;
-    await axios.post("http://localhost:5000/api/tasks", newTask);
-    const r = await axios.get("http://localhost:5000/api/tasks");
+    await api.post("/api/tasks", newTask);
+    const r = await api.get("/api/tasks");
     setTasks(r.data);
     setNewTask({ title: "", description: "", reward: "", difficulty: "easy" });
   };
 
   const deleteTask = async (id) => {
-    await axios.delete(`http://localhost:5000/api/tasks/${id}`);
+    await api.delete(`/api/tasks/${id}`);
     setTasks(tasks.filter((t) => t.id !== id));
   };
 
   const addTraining = async () => {
     if (!newTraining.title) return;
-    await axios.post("http://localhost:5000/api/trainings", newTraining);
-    const r = await axios.get("http://localhost:5000/api/trainings");
+    await api.post("/api/trainings", newTraining);
+    const r = await api.get("/api/trainings");
     setTrainings(r.data);
     setNewTraining({ title: "", description: "", level: "beginner" });
   };
 
   const deleteTraining = async (id) => {
-    await axios.delete(`http://localhost:5000/api/trainings/${id}`);
+    await api.delete(`/api/trainings/${id}`);
     setTrainings(trainings.filter((t) => t.id !== id));
   };
 

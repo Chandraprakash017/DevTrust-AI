@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain, MessageSquare, Award, RefreshCcw, Send, Play, CheckCircle } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 
 export default function MockInterview() {
@@ -23,7 +23,7 @@ export default function MockInterview() {
     }
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/mock-interview", { role, skills });
+      const res = await api.post("/api/ai/mock-interview", { role, skills });
       setInterviewData(res.data);
       setStep(1);
     } catch (err) {
@@ -37,7 +37,7 @@ export default function MockInterview() {
     if (!answer.trim()) return;
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/mock-interview", { 
+      const res = await api.post("/api/ai/mock-interview", { 
         role, 
         skills, 
         lastAnswer: answer 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
@@ -12,8 +12,8 @@ export default function PaymentHistory() {
 
   useEffect(() => {
     if (!user.id) return;
-    axios
-      .get(`http://localhost:5000/api/payment/history/${user.id}`)
+    api
+      .get(`/api/payment/history/${user.id}`)
       .then((res) => {
         setData(res.data);
         setTotal(res.data.reduce((acc, e) => acc + parseFloat(e.amount || 0), 0));

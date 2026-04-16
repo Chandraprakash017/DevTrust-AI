@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,13 +47,13 @@ export default function Payment() {
     setProcessing(true);
     try {
       // Create mock order
-      await axios.post("http://localhost:5000/api/payment/create-order", { amount: selected.price });
+      await api.post("/api/payment/create-order", { amount: selected.price });
 
       // Simulate processing delay
       await new Promise((r) => setTimeout(r, 2000));
 
       // Save earning / payment record
-      await axios.post("http://localhost:5000/api/payment/verify", {
+      await api.post("/api/payment/verify", {
         user_id: user.id,
         amount: selected.price,
         source: `${selected.name} Plan Subscription`,

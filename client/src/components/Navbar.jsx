@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import { User, LogOut, Settings, Bell, Sun, Moon, ChevronDown } from "lucide-react";
 
@@ -15,8 +15,8 @@ export default function Navbar({ title }) {
 
   useEffect(() => {
     if (!user) return;
-    axios
-      .get(`http://localhost:5000/api/notifications/${user.id}`)
+    api
+      .get(`/api/notifications/${user.id}`)
       .then((res) => setNoti(res.data))
       .catch(() => {});
   }, []);

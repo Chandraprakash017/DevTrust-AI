@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { 
   FileText, TrendingUp, Briefcase, Award, 
   CheckCircle, AlertCircle, Sparkles, BookOpen 
@@ -26,11 +26,11 @@ const CareerGuidance = () => {
     formData.append("userId", user.id);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/analyze-resume", formData);
+      const res = await api.post("/api/ai/analyze-resume", formData);
       setAnalysis(res.data.analysis);
       
       // Also fetch guidance after resume is analyzed
-      const guidRes = await axios.post("http://localhost:5000/api/ai/career-guidance", { userId: user.id });
+      const guidRes = await api.post("/api/ai/career-guidance", { userId: user.id });
       setGuidance(guidRes.data.guidance);
     } catch (err) {
       console.error(err);

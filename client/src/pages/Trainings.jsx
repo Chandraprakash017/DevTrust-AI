@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
@@ -31,7 +31,7 @@ export default function Trainings() {
 
   const fetchTrainings = () => {
     setLoading(true);
-    axios.get("http://localhost:5000/api/trainings")
+    api.get("/api/trainings")
       .then((r) => setTrainings(r.data))
       .catch(() => toast.error("Failed to load trainings"))
       .finally(() => setLoading(false));
@@ -42,7 +42,7 @@ export default function Trainings() {
   const addTraining = async () => {
     if (!newT.title) return toast.error("Title is required");
     try {
-      await axios.post("http://localhost:5000/api/trainings", newT);
+      await api.post("/api/trainings", newT);
       toast.success("✅ Training added!");
       setNewT({ title: "", description: "", level: "beginner" });
       setShowForm(false);
@@ -52,7 +52,7 @@ export default function Trainings() {
 
   const deleteTraining = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/trainings/${id}`);
+      await api.delete(`/api/trainings/${id}`);
       setTrainings((prev) => prev.filter((t) => t.id !== id));
       toast.success("Training deleted");
     } catch { toast.error("Failed to delete"); }

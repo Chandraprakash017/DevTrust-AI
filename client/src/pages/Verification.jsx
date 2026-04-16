@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
@@ -22,7 +22,7 @@ export default function Verification() {
     if (!doc.trim()) return toast.error("Please enter a document URL");
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/verify/upload", {
+      await api.post("/api/verify/upload", {
         user_id: user.id,
         document_url: doc,
       });

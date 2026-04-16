@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import io from "socket.io-client";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Paperclip, Video, X, File, Image as ImageIcon, Download, Phone } from "lucide-react";
 import VideoCall from "../components/VideoCall";
 
-const socket = io("http://localhost:5000");
+const socket = io(import.meta.env.VITE_API_URL || "http://localhost:5000");
 
 export default function Chat() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -56,7 +56,7 @@ export default function Chat() {
 
   // Fetch all users
   useEffect(() => {
-    axios.get("http://localhost:5000/api/users").then((r) => {
+    api.get("/api/users").then((r) => {
       setUsers(r.data.filter((u) => u.id !== user.id));
     }).catch(() => {});
   }, []);
@@ -65,8 +65,8 @@ export default function Chat() {
   const openChat = (u) => {
     setSelectedUser(u);
     setMessages([]);
-    axios
-      .get(`http://localhost:5000/api/messages/${user.id}/${u.id}`)
+    api
+      .get(`/api/messages/${user.id}/${u.id}`)
       .then((r) => setMessages(r.data.map((m) => ({ 
         senderId: m.sender_id, 
         message: m.message,
@@ -92,7 +92,7 @@ export default function Chat() {
     if (file) formData.append("file", file);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/messages", formData);
+      const res = await api.post("/api/messages", formData);
       const newMessage = { 
         senderId: user.id, 
         message, 
@@ -250,11 +250,11 @@ export default function Chat() {
                                 {m.fileType?.includes("image") ? (
                                   <div className="relative group">
                                     <img 
-                                      src={`http://localhost:5000/${m.fileUrl}`} 
+                                      src={`${api.defaults.baseURL}/${m.fileUrl}`} 
                                       className="max-w-full rounded-xl cursor-pointer hover:brightness-75 transition-all" 
                                       alt="shared" 
                                     />
-                                    <a href={`http://localhost:5000/${m.fileUrl}`} target="_blank" rel="noreferrer" className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <a href={`${api.defaults.baseURL}/${m.fileUrl}`} target="_blank" rel="noreferrer" className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                       <Download className="text-white" />
                                     </a>
                                   </div>
@@ -267,7 +267,7 @@ export default function Chat() {
                                       <p className="font-bold truncate text-xs">{m.fileName}</p>
                                       <p className="text-[10px] opacity-60">Document Shared</p>
                                     </div>
-                                    <a href={`http://localhost:5000/${m.fileUrl}`} target="_blank" rel="noreferrer" className="p-2 hover:bg-black/5 rounded-full transition-colors">
+                                    <a href={`${api.defaults.baseURL}/${m.fileUrl}`} target="_blank" rel="noreferrer" className="p-2 hover:bg-black/5 rounded-full transition-colors">
                                       <Download size={16} />
                                     </a>
                                   </div>

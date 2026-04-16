@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Bot, User, Minimize2, Sparkles } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 
 export default function AIChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +45,7 @@ export default function AIChatBot() {
         parts: [{ text: m.content }] 
       }));
 
-      const res = await axios.post("http://localhost:5000/api/ai/chatbot", { 
+      const res = await api.post("/api/ai/chatbot", { 
         message: input,
         history: history.slice(-6) // Keep last 3 exchanges
       });

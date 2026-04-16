@@ -1,5 +1,5 @@
-import { useState } from "react";
 import axios from "axios";
+import api from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -17,7 +17,7 @@ export default function Login() {
 
     try {
       const loginForm = { ...form, email: form.email.toLowerCase() };
-      const res = await axios.post("http://localhost:5000/api/auth/login", loginForm);
+      const res = await api.post("/api/auth/login", loginForm);
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -48,7 +48,7 @@ export default function Login() {
 
         const { name, email, picture } = userInfo.data;
         
-        const res = await axios.post("http://localhost:5000/api/auth/google-login", {
+        const res = await api.post("/api/auth/google-login", {
           name,
           email,
           profile_picture: picture

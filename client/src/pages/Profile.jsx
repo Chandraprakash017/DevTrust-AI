@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { User, Mail, Phone, Book, Save, ArrowLeft, Camera, Loader2 } from "lucide-react";
@@ -26,7 +26,7 @@ export default function Profile() {
         return;
     }
     // Fetch fresh data from API
-    axios.get(`http://localhost:5000/api/users/profile/${user.id}`)
+    api.get(`/api/users/profile/${user.id}`)
       .then(res => {
         setFormData({
           name: res.data.name || "",
@@ -49,7 +49,7 @@ export default function Profile() {
     setIsLoading(true);
 
     try {
-      const res = await axios.put(`http://localhost:5000/api/users/profile/${user.id}`, formData);
+      const res = await api.put(`/api/users/profile/${user.id}`, formData);
       
       const updatedUser = { ...user, ...res.data.user };
       localStorage.setItem("user", JSON.stringify(updatedUser));

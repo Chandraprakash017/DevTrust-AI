@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -16,7 +16,7 @@ export default function Register() {
 
     try {
       const registerForm = { ...form, email: form.email.toLowerCase() };
-      await axios.post("http://localhost:5000/api/auth/register", registerForm);
+      await api.post("/api/auth/register", registerForm);
       toast.success("Account created successfully! Welcome aboard 🚀");
       navigate("/login");
     } catch (err) {

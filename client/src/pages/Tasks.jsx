@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,7 +32,7 @@ export default function Tasks() {
 
   const fetchTasks = () => {
     setLoading(true);
-    axios.get("http://localhost:5000/api/tasks")
+    api.get("/api/tasks")
       .then((r) => {
         setTasks(r.data);
         if (!isAdmin) fetchRecommendations(r.data);
@@ -43,7 +43,7 @@ export default function Tasks() {
 
   const fetchRecommendations = async (allTasks) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/recommend-tasks", {
+      const res = await api.post("/api/ai/recommend-tasks", {
         userId: user.id,
         userSkills: user.skills ? JSON.parse(user.skills) : ["React", "Node.js"] // Fallback for demo
       });
@@ -60,7 +60,7 @@ export default function Tasks() {
     setShowProposalModal(true);
     setGenerating(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/generate-proposal", {
+      const res = await api.post("/api/ai/generate-proposal", {
         userProfile: { skills: user.skills },
         taskDescription: task.description
       });
@@ -75,7 +75,7 @@ export default function Tasks() {
   const addTask = async () => {
     if (!newTask.title) return toast.error("Title is required");
     try {
-      await axios.post("http://localhost:5000/api/tasks", newTask);
+      await api.post("/api/tasks", newTask);
       toast.success("✅ Task added!");
       setNewTask({ title: "", description: "", reward: "", difficulty: "easy" });
       setShowForm(false);
@@ -87,7 +87,7 @@ export default function Tasks() {
 
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`);
+      await api.delete(`/api/tasks/${id}`);
       setTasks((prev) => prev.filter((t) => t.id !== id));
       toast.success("Task deleted");
     } catch {

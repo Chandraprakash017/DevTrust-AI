@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
@@ -16,9 +16,9 @@ export default function ClientDashboard() {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/tasks").then((r) => setTasks(r.data)).catch(() => {});
+    api.get("/api/tasks").then((r) => setTasks(r.data)).catch(() => {});
     if (user.id) {
-      axios.get(`http://localhost:5000/api/payment/history/${user.id}`).then((r) => {
+      api.get(`/api/payment/history/${user.id}`).then((r) => {
         setPayments(r.data);
         setTotal(r.data.reduce((acc, e) => acc + parseFloat(e.amount || 0), 0));
       }).catch(() => {});
@@ -27,8 +27,8 @@ export default function ClientDashboard() {
 
   const postTask = async () => {
     if (!newTask.title) return;
-    await axios.post("http://localhost:5000/api/tasks", newTask);
-    const r = await axios.get("http://localhost:5000/api/tasks");
+    await api.post("/api/tasks", newTask);
+    const r = await api.get("/api/tasks");
     setTasks(r.data);
     setNewTask({ title: "", description: "", reward: "", difficulty: "easy" });
     setShowForm(false);

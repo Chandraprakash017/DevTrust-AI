@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Send, Copy, Check, Wand2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -12,7 +12,7 @@ export default function ProposalGenerator({ taskDescription, userProfile, onAppl
   const generateAIProposal = async () => {
     setIsGenerating(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/ai/generate-proposal", {
+      const res = await api.post("/api/ai/generate-proposal", {
         userProfile,
         taskDescription
       });

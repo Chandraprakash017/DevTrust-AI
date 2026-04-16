@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,7 +25,7 @@ export default function FreelancerDashboard() {
 
   const fetchEarnings = () => {
     if (!user.id) return;
-    axios.get(`http://localhost:5000/api/earnings/${user.id}`).then((res) => {
+    api.get(`/api/earnings/${user.id}`).then((res) => {
       setEarnings(res.data);
       setTotal(res.data.reduce((acc, e) => acc + parseFloat(e.amount || 0), 0));
     }).catch(() => {});
@@ -99,9 +99,9 @@ export default function FreelancerDashboard() {
   const handleMockPayment = async () => {
     setPaying(true);
     try {
-      await axios.post("http://localhost:5000/api/payment/create-order", { amount: payAmount });
+      await api.post("/api/payment/create-order", { amount: payAmount });
       await new Promise((r) => setTimeout(r, 1500));
-      await axios.post("http://localhost:5000/api/payment/verify", {
+      await api.post("/api/payment/verify", {
         user_id: user.id,
         amount: payAmount,
         source: paySource,

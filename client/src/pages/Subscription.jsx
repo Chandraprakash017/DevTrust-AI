@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Sparkles, Zap, Shield, Rocket } from "lucide-react";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -69,7 +69,7 @@ export default function Subscription() {
     setIsLoading(true);
     try {
       // Mock payment and subscription
-      const res = await axios.post("http://localhost:5000/api/payment/subscribe", {
+      const res = await api.post("/api/payment/subscribe", {
         user_id: user.id,
         amount: 499,
         plan: "pro"
