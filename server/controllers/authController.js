@@ -2,7 +2,7 @@ const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// REGISTER
+// register karo
 exports.register = (req, res) => {
   const { name, email, password, role } = req.body;
 
@@ -34,7 +34,7 @@ exports.register = (req, res) => {
   });
 };
 
-// LOGIN
+// login karo
 exports.login = (req, res) => {
   const { email, password } = req.body;
 
@@ -65,7 +65,7 @@ exports.login = (req, res) => {
       { expiresIn: "1d" }
     );
 
-    // Don't send password back
+    // password wapis mat bhejo
     const { password: _, ...safeUser } = user;
 
     res.json({
@@ -76,7 +76,7 @@ exports.login = (req, res) => {
   });
 };
 
-// GET ALL USERS (for admin / chat user list)
+// saare users laao (admin / chat ke liye)
 exports.getUsers = (req, res) => {
   db.query(
     "SELECT id, name, email, role, created_at FROM users ORDER BY id DESC",
@@ -87,7 +87,7 @@ exports.getUsers = (req, res) => {
   );
 };
 
-// GET STATS (for admin dashboard)
+// stats laao (admin dashboard ke liye)
 exports.getStats = (req, res) => {
   const queries = {
     totalUsers: "SELECT COUNT(*) AS count FROM users",
@@ -116,7 +116,7 @@ exports.getStats = (req, res) => {
   });
 };
 
-// CREATE ADMIN (one-time setup)
+// admin banao (ek baar)
 exports.createAdmin = (req, res) => {
   const hashed = bcrypt.hashSync("123456", 10);
   db.query(
@@ -129,7 +129,7 @@ exports.createAdmin = (req, res) => {
   );
 };
 
-// GOOGLE LOGIN
+// google se login karo
 exports.googleLogin = (req, res) => {
   const { name, email, profile_picture } = req.body;
 
@@ -141,7 +141,7 @@ exports.googleLogin = (req, res) => {
     if (err) return res.status(500).json(err);
 
     if (result.length > 0) {
-      // User exists, log them in
+      // user hai, login karwao
       const user = result[0];
       console.log(`✅ Google User Found: ${normalizedEmail}`);
       const token = jwt.sign(
@@ -152,7 +152,7 @@ exports.googleLogin = (req, res) => {
       const { password: _, ...safeUser } = user;
       return res.json({ message: "✅ Google Login Successful", token, user: safeUser });
     } else {
-      // User doesn't exist, create account
+      // user nahi hai, naya account banao
       const sql = "INSERT INTO users (name, email, password, role, profile_picture) VALUES (?, ?, ?, ?, ?)";
       const dummyPassword = bcrypt.hashSync(Math.random().toString(36), 10);
       

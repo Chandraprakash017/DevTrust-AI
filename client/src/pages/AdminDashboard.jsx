@@ -22,12 +22,12 @@ export default function AdminDashboard() {
     api.get("/api/users/stats").then((r) => setStats(r.data)).catch(() => {});
     api.get("/api/tasks").then((r) => setTasks(r.data)).catch(() => {});
     api.get("/api/trainings").then((r) => setTrainings(r.data)).catch(() => {});
-    // Fetch all verifications via a custom query approach
+    // custom query se saari verifications laao
     fetchVerifications();
   }, []);
 
   const fetchVerifications = () => {
-    // Get all users to check verifications
+    // verifications check karne ke liye saare users laao
     api.get("/api/users").then(() => {}).catch(() => {});
   };
 

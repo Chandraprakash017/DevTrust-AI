@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-// GET ALL TASKS
+// saare tasks laao
 exports.getTasks = (req, res) => {
   db.query("SELECT * FROM tasks ORDER BY id DESC", (err, result) => {
     if (err) return res.status(500).json(err);
@@ -8,7 +8,7 @@ exports.getTasks = (req, res) => {
   });
 };
 
-// ADD TASK
+// task jodo
 exports.addTask = (req, res) => {
   const { title, description, reward, difficulty } = req.body;
 
@@ -24,7 +24,7 @@ exports.addTask = (req, res) => {
   );
 };
 
-// DELETE TASK
+// task hatao
 exports.deleteTask = (req, res) => {
   const { id } = req.params;
 

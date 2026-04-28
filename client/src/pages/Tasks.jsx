@@ -24,7 +24,7 @@ export default function Tasks() {
   const [newTask, setNewTask] = useState({ title: "", description: "", reward: "", difficulty: "easy" });
   const [showForm, setShowForm] = useState(false);
   
-  // AI Proposal State
+  // ai proposal ki state
   const [showProposalModal, setShowProposalModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [proposal, setProposal] = useState("");
@@ -45,7 +45,7 @@ export default function Tasks() {
     try {
       const res = await api.post("/api/ai/recommend-tasks", {
         userId: user.id,
-        userSkills: user.skills ? JSON.parse(user.skills) : ["React", "Node.js"] // Fallback for demo
+        userSkills: user.skills ? JSON.parse(user.skills) : ["React", "Node.js"] // demo ke liye fallback
       });
       setRecommendations(res.data);
     } catch (err) {

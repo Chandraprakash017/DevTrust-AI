@@ -68,7 +68,7 @@ export default function Subscription() {
   const handleUpgrade = async () => {
     setIsLoading(true);
     try {
-      // Mock payment and subscription
+      // nakli payment aur subscription
       const res = await api.post("/api/payment/subscribe", {
         user_id: user.id,
         amount: 499,
@@ -77,7 +77,7 @@ export default function Subscription() {
 
       if (res.data.success) {
         toast.success("Welcome to DevTrust Pro! 🚀");
-        // Update local storage user object
+        // local storage me user update karo
         const updatedUser = { ...user, plan: "pro" };
         localStorage.setItem("user", JSON.stringify(updatedUser));
         

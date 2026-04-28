@@ -13,7 +13,7 @@ router.post("/", (req, res) => {
   db.query(sql, [task_id, reviewer_id, reviewee_id, rating, comment, is_verified], (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
     
-    // Trigger Reputation Update
+    // reputation update karo
     updateReputationScore(reviewee_id);
     
     res.json({ message: "Review posted successfully!", reviewId: result.insertId });

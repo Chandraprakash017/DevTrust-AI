@@ -29,7 +29,7 @@ const CareerGuidance = () => {
       const res = await api.post("/api/ai/analyze-resume", formData);
       setAnalysis(res.data.analysis);
       
-      // Also fetch guidance after resume is analyzed
+      // resume check hone ke baad guidance bhi laao
       const guidRes = await api.post("/api/ai/career-guidance", { userId: user.id });
       setGuidance(guidRes.data.guidance);
     } catch (err) {

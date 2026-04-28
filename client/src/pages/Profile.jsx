@@ -25,7 +25,7 @@ export default function Profile() {
         navigate("/login");
         return;
     }
-    // Fetch fresh data from API
+    // api se naya data laao
     api.get(`/api/users/profile/${user.id}`)
       .then(res => {
         setFormData({

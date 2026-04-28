@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-// 🎭 MOCK PAYMENT – Create Order (No real payment gateway)
+// 🎭 nakli payment - order banao (asli gateway nahi hai)
 exports.createOrder = (req, res) => {
   const { amount } = req.body;
 
@@ -8,10 +8,10 @@ exports.createOrder = (req, res) => {
     return res.status(400).json({ message: "Invalid amount" });
   }
 
-  // Simulate order creation
+  // order banne ka natak karo
   const mockOrder = {
     id: "mock_order_" + Date.now(),
-    amount: amount * 100, // in paise (like Razorpay format)
+    amount: amount * 100, // paise mein (razorpay ki tarah)
     currency: "INR",
     status: "created",
   };
@@ -19,7 +19,7 @@ exports.createOrder = (req, res) => {
   res.json(mockOrder);
 };
 
-// ✅ MOCK PAYMENT – Verify / Confirm Payment & Save Earning
+// ✅ nakli payment - check karo aur earning save karo
 exports.verifyPayment = (req, res) => {
   const { user_id, amount, source } = req.body;
 
@@ -27,14 +27,14 @@ exports.verifyPayment = (req, res) => {
     return res.status(400).json({ message: "user_id and amount required" });
   }
 
-  // Save earning to DB
+  // db mein kamai save karo
   db.query(
     "INSERT INTO earnings (user_id, amount, source) VALUES (?, ?, ?)",
     [user_id, amount, source || "Payment"],
     (err) => {
       if (err) return res.status(500).json(err);
 
-      // Add a notification
+      // notification daalo
       db.query(
         "INSERT INTO notifications (user_id, message) VALUES (?, ?)",
         [user_id, `✅ Payment of ₹${amount} received for ${source || "Payment"}`],
@@ -46,7 +46,7 @@ exports.verifyPayment = (req, res) => {
   );
 };
 
-// 🚀 SUBSCRIBE – Upgrade User to Pro
+// 🚀 subscribe - user ko pro banao
 exports.subscribe = (req, res) => {
   const { user_id, amount, plan, transaction_id } = req.body;
 
@@ -54,21 +54,21 @@ exports.subscribe = (req, res) => {
     return res.status(400).json({ message: "Invalid subscription details" });
   }
 
-  // 1. Update user plan
+  // 1. user plan ko badlo
   db.query(
     "UPDATE users SET plan = ? WHERE id = ?",
     ["pro", user_id],
     (err) => {
       if (err) return res.status(500).json({ message: "Failed to update user plan", error: err });
 
-      // 2. Log subscription
+      // 2. subscription ko log karo
       db.query(
         "INSERT INTO subscriptions (user_id, plan, amount, transaction_id) VALUES (?, ?, ?, ?)",
         [user_id, "pro", amount, transaction_id || "mock_txn_" + Date.now()],
         (err) => {
           if (err) console.error("Subscription Log Error:", err);
 
-          // 3. Add notification
+          // 3. notification daalo
           db.query(
             "INSERT INTO notifications (user_id, message) VALUES (?, ?)",
             [user_id, "🌟 Welcome to DevTrust Pro! You now have access to all premium GenAI features."],
@@ -82,7 +82,7 @@ exports.subscribe = (req, res) => {
   );
 };
 
-// 📊 GET payment / earning history
+// 📊 payment / earning history laao
 exports.getPayments = (req, res) => {
   const userId = req.params.id;
 

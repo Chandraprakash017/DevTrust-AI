@@ -5,7 +5,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-// Multer Setup for Chat Files
+// chat files ke liye multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = "./uploads/chat";
@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Get Messages
+// messages laao
 router.get("/:senderId/:receiverId", (req, res) => {
   const { senderId, receiverId } = req.params;
   const sql = `
@@ -32,7 +32,7 @@ router.get("/:senderId/:receiverId", (req, res) => {
   });
 });
 
-// Send Message with Optional File
+// file ke sath message bhejo
 router.post("/", upload.single("file"), (req, res) => {
   const { senderId, receiverId, message } = req.body;
   const fileUrl = req.file ? req.file.path : null;

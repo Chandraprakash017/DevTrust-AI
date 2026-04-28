@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-// 💰 SAVE PAYMENT
+// 💰 payment save karo
 exports.addEarning = (req, res) => {
   const { user_id, amount, source } = req.body;
 
@@ -15,7 +15,7 @@ exports.addEarning = (req, res) => {
   );
 };
 
-// 📊 GET EARNINGS
+// 📊 earnings laao
 exports.getEarnings = (req, res) => {
   const userId = req.params.id;
 

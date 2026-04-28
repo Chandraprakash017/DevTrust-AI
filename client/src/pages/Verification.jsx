@@ -12,8 +12,8 @@ export default function Verification() {
   const [loading, setLoading] = useState(false);
 
   const fetchDocs = () => {
-    // We'll query notifications to see if there's a verification status
-    // For now we track submissions in state after upload
+    // verification status dekhne ke liye notifications check karenge
+    // abhi ke liye upload ke baad hum submissions state mein track karte hai
   };
 
   useEffect(() => { fetchDocs(); }, []);

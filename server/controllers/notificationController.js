@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-// 🔔 ADD NOTIFICATION
+// 🔔 notification daalo
 exports.addNotification = (req, res) => {
   const { user_id, message } = req.body;
 
@@ -15,7 +15,7 @@ exports.addNotification = (req, res) => {
   );
 };
 
-// 📥 GET NOTIFICATIONS
+// 📥 notifications laao
 exports.getNotifications = (req, res) => {
   const userId = req.params.id;
 

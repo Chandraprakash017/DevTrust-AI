@@ -37,7 +37,7 @@ const VideoCall = ({ socket, user, receiverId, onEndCall }) => {
 
     socket.on("call-ended", () => {
       setCallEnded(true);
-      window.location.reload(); // Simple cleanup
+      window.location.reload(); // simple safai
     });
 
     return () => {

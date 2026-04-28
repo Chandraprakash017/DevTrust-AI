@@ -47,7 +47,7 @@ export default function AIChatBot() {
 
       const res = await api.post("/api/ai/chatbot", { 
         message: input,
-        history: history.slice(-6) // Keep last 3 exchanges
+        history: history.slice(-6) // aakhri 3 baatein rakho
       });
 
       setMessages(prev => [...prev, { role: "assistant", content: res.data.response }]);

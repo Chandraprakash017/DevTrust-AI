@@ -7,7 +7,7 @@ const db = require("../config/db");
 const path = require("path");
 const fs = require("fs");
 
-// Multer Setup
+// multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = "./uploads/resumes";
@@ -35,7 +35,7 @@ router.post("/analyze-resume", upload.single("resume"), async (req, res) => {
 
     const analysis = await aiService.analyzeResume(pdfData.text);
 
-    // Save resume URL and analysis to user profile
+    // resume url aur analysis user profile mein save karo
     const skillsJson = JSON.stringify(analysis.skills);
     db.query(
       "UPDATE users SET resume_url = ?, skills = ? WHERE id = ?",
@@ -67,7 +67,7 @@ router.post("/recommend-tasks", async (req, res) => {
     db.query("SELECT * FROM tasks", async (err, tasks) => {
       if (err) return res.status(500).send(err);
 
-      // Simply filtering for now, could be enhanced with AI scoring
+      // abhi bas filter kar rahe hai, ai se achha ban sakta hai
       const recommendations = tasks.map(task => {
         const matchingSkills = userSkills?.filter(s => task.description.toLowerCase().includes(s.toLowerCase()));
         return {

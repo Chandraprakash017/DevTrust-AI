@@ -3,7 +3,7 @@ const mysql = require("mysql2");
 let activeDb;
 let isMock = false;
 
-// IN-MEMORY STORAGE (for Mock Mode)
+// memory mein storage (mock mode ke liye)
 const memoryStore = {
   users: [
     { id: 1, name: "Admin", email: "admin@gmail.com", password: "", role: "admin", plan: "pro", skills: "[]", reputation_score: 5.0 },
@@ -25,7 +25,7 @@ const memoryStore = {
   invoices: [],
 };
 
-// INITIALIZE REAL MYSQL
+// asli mysql start karo
 const pool = mysql.createConnection({
   host:     process.env.DB_HOST     || "localhost",
   port:     process.env.DB_PORT     || 3306,
@@ -39,27 +39,27 @@ pool.connect((err) => {
     console.log("⚠️  MySQL Not Found (is port 3306 open?): Switching to SMART MOCK MODE 🚀");
     isMock = true;
     
-    // Create Mock DB Object
+    // nakli db object banao
     activeDb = {
       query: (sql, params, callback) => {
         if (typeof params === 'function') { callback = params; params = []; }
         const cleaned = sql.toLowerCase().trim();
         
-        // MOCK AUTH LOGIC (Email Check)
+        // nakli auth (email check)
         if (cleaned.includes("from users where email =")) {
           const emailToFind = params[0].toLowerCase();
           const u = memoryStore.users.find(x => x.email.toLowerCase() === emailToFind);
           return callback(null, u ? [u] : []);
         }
         
-        // MOCK PROFILE LOGIC (ID Check)
+        // nakli profile (id check)
         if (cleaned.includes("from users where id =")) {
           const idToFind = params[0];
           const u = memoryStore.users.find(x => x.id == idToFind);
           return callback(null, u ? [u] : []);
         }
 
-        // MOCK REGISTRATION
+        // nakli registration
         if (cleaned.startsWith("insert into users")) {
           const [name, email, password, role] = params;
           const normalizedEmail = email.toLowerCase();
@@ -79,23 +79,23 @@ pool.connect((err) => {
           return callback(null, { insertId: newUser.id });
         }
 
-        // MOCK LIST USERS
+        // nakli users list
         if (cleaned.startsWith("select") && cleaned.includes("from users")) {
            return callback(null, memoryStore.users);
         }
 
-        // MOCK TASK LOGIC
+        // nakli task logic
         if (cleaned.includes("from tasks")) {
           return callback(null, memoryStore.tasks);
         }
 
-        // MOCK EARNINGS LOGIC
+        // nakli earnings
         if (cleaned.includes("from earnings where user_id =")) {
           const userEarnings = memoryStore.earnings.filter(e => e.user_id == params[0]);
           return callback(null, userEarnings);
         }
 
-        // GENERIC SUCCESS
+        // aam success
         callback(null, { insertId: Date.now() });
       }
     };
@@ -125,8 +125,8 @@ function initializeTables(db) {
       plan ENUM('free', 'pro') DEFAULT 'free',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,
-    // For standard MySQL, we don't use ALTER TABLE IF NOT EXISTS. 
-    // We just run them; if columns exist, they'll fail quietly or we catch them.
+    // normal mysql me, hum alter table if not exists nahi use karte.
+    // bas run kar dete hai; agar column hai, toh aaram se fail hoga ya hum catch karenge.
     `ALTER TABLE users ADD COLUMN reputation_score DECIMAL(3,2) DEFAULT 0`,
     `ALTER TABLE users ADD COLUMN phone_number VARCHAR(20)`,
     `ALTER TABLE users ADD COLUMN preferred_language VARCHAR(10) DEFAULT 'en'`,
@@ -243,18 +243,18 @@ function initializeTables(db) {
 
   tables.forEach((sql) => {
     db.query(sql, (err) => {
-      // Ignore errors for existing columns/tables
+      // pehle se bane column/table ke error ignore karo
     });
   });
 }
 
-// EXPORT A WRAPPER TO PREVENT INITIALIZATION RACE CONDITIONS
+// race condition rokne ke liye wrapper export karo
 module.exports = {
   query: (sql, params, callback) => {
     if (activeDb) {
       return activeDb.query(sql, params, callback);
     }
-    // Fallback if not initialized yet
+    // agar start nahi hua to fallback
     return pool.query(sql, params, callback);
   }
 };

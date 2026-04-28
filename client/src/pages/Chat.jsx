@@ -26,7 +26,7 @@ export default function Chat() {
   const bottomRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Register socket and listen for events
+  // socket register karo aur events suno
   useEffect(() => {
     if (!user.id) return;
     socket.emit("join", user.id);
@@ -54,14 +54,14 @@ export default function Chat() {
     };
   }, []);
 
-  // Fetch all users
+  // sabhi users laao
   useEffect(() => {
     api.get("/api/users").then((r) => {
       setUsers(r.data.filter((u) => u.id !== user.id));
     }).catch(() => {});
   }, []);
 
-  // Load history
+  // purani baatein laao
   const openChat = (u) => {
     setSelectedUser(u);
     setMessages([]);

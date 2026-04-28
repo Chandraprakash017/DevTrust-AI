@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-// Upload
+// upload karo
 exports.uploadDoc = (req, res) => {
   const { user_id, document_url } = req.body;
 
@@ -14,7 +14,7 @@ exports.uploadDoc = (req, res) => {
   );
 };
 
-// Admin approve
+// admin pass karega
 exports.updateStatus = (req, res) => {
   const { id, status } = req.body;
 

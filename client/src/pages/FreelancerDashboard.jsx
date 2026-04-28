@@ -35,24 +35,24 @@ export default function FreelancerDashboard() {
     fetchEarnings();
   }, []);
 
-  // jsPDF Invoice Generation
+  // jspdf se invoice banao
   const handleDownloadInvoice = (earning) => {
     const doc = new jsPDF();
     
-    // Header
+    // header
     doc.setFontSize(22);
-    doc.setTextColor(79, 70, 229); // Purple
+    doc.setTextColor(79, 70, 229); // purple
     doc.text("DEVTRUST AI", 105, 20, { align: "center" });
     
     doc.setFontSize(10);
     doc.setTextColor(100);
     doc.text("Official Project Invoice & Payment Receipt", 105, 28, { align: "center" });
     
-    // Divider
+    // divider
     doc.setDrawColor(230);
     doc.line(20, 35, 190, 35);
     
-    // Billing Details
+    // bill ki details
     doc.setFontSize(12);
     doc.setTextColor(40);
     doc.text("BILL TO:", 20, 50);
@@ -66,28 +66,28 @@ export default function FreelancerDashboard() {
     doc.text("DATE:", 140, 62);
     doc.text(new Date(earning.created_at).toLocaleDateString(), 140, 68);
     
-    // Table Header
+    // table ka header
     doc.setFillColor(245, 247, 250);
     doc.rect(20, 80, 170, 10, "F");
     doc.setFont("helvetica", "bold");
     doc.text("Description", 25, 87);
     doc.text("Amount (INR)", 160, 87, { align: "right" });
     
-    // Table Content
+    // table ka content
     doc.setFont("helvetica", "normal");
     doc.text(earning.source, 25, 100);
     doc.text(`INR ${earning.amount}`, 160, 100, { align: "right" });
     
     doc.line(20, 110, 190, 110);
     
-    // Total
+    // total
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
     doc.text("TOTAL PAID:", 120, 125);
-    doc.setTextColor(22, 163, 74); // Green
+    doc.setTextColor(22, 163, 74); // hara
     doc.text(`INR ${earning.amount}`, 160, 125, { align: "right" });
     
-    // Footer
+    // footer
     doc.setTextColor(150);
     doc.setFontSize(10);
     doc.text("Thank you for using DevTrust AI for your professional journey.", 105, 150, { align: "center" });
@@ -95,7 +95,7 @@ export default function FreelancerDashboard() {
     doc.save(`Invoice_${earning.source.replace(/\s+/g, '_')}.pdf`);
   };
 
-  // Mock Payment Flow
+  // nakli payment ka process
   const handleMockPayment = async () => {
     setPaying(true);
     try {

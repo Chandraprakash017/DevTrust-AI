@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-// GET USER PROFILE
+// user profile laao
 exports.getProfile = (req, res) => {
   const userId = req.params.id;
   const sql = "SELECT id, name, email, role, phone_number, bio, profile_picture, skills, reputation_score, created_at FROM users WHERE id = ?";
@@ -16,7 +16,7 @@ exports.getProfile = (req, res) => {
   });
 };
 
-// UPDATE USER PROFILE
+// user profile badlo
 exports.updateProfile = (req, res) => {
   const userId = req.params.id;
   const { name, phone_number, bio, profile_picture, skills } = req.body;
@@ -33,7 +33,7 @@ exports.updateProfile = (req, res) => {
       return res.status(500).json({ message: "Update failed", error: err.message });
     }
     
-    // Fetch updated user to return
+    // naya user fetch karo
     db.query("SELECT id, name, email, role, phone_number, bio, profile_picture, skills FROM users WHERE id = ?", [userId], (err, result) => {
       if (err) return res.status(500).json(err);
       res.json({ message: "✅ Profile Updated Successfully", user: result[0] });

@@ -14,7 +14,7 @@ app.use(cors({
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ─── ROUTES ──────────────────────────────────────────────
+// ─── raste ──────────────────────────────────────────────
 const authRoutes         = require("./routes/authRoutes");
 const userRoutes         = require("./routes/userRoutes");
 const messageRoutes      = require("./routes/messageRoutes");
@@ -39,49 +39,49 @@ app.use("/api/verify",        verificationRoutes);
 app.use("/api/ai",            aiRoutes);
 app.use("/api/reviews",       reviewRoutes);
 
-// ─── ROOT HEALTH CHECK ───────────────────────────────────
+// ─── health check ───────────────────────────────────
 app.get("/", (req, res) => res.json({ status: "✅ DevTrust API running" }));
 
-// ─── SOCKET.IO ───────────────────────────────────────────
+// ─── socket.io ───────────────────────────────────────────
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: { origin: "*" },
 });
 
-// Store online users: { userId: socketId }
+// online users rakho: { userId: socketId }
 const onlineUsers = {};
 
 io.on("connection", (socket) => {
   console.log("🔌 User connected:", socket.id);
 
-  // Mark user online
+  // user ko online dikhao
   socket.on("userOnline", (userId) => {
     onlineUsers[userId] = socket.id;
     io.emit("onlineUsers", onlineUsers);
   });
 
-  // Join personal room
+  // apne room me aao
   socket.on("join", (userId) => {
     socket.join(userId.toString());
   });
 
-  // Send message
+  // message bhejo
   socket.on("sendMessage", ({ senderId, receiverId, message }) => {
     io.to(receiverId.toString()).emit("receiveMessage", { senderId, message });
   });
 
-  // Typing indicator
+  // typing dikhao
   socket.on("typing", ({ senderId, receiverId }) => {
     io.to(receiverId.toString()).emit("typing", senderId);
   });
 
-  // Message seen
+  // message padh liya
   socket.on("seenMessage", ({ senderId, receiverId }) => {
     io.to(receiverId.toString()).emit("messageSeen");
   });
 
-  // ─── WEBRTC VIDEO CALL ──────────────────────────────────
+  // ─── webrtc video call ──────────────────────────────────
   socket.on("call-user", ({ userToCall, signalData, from, name }) => {
     io.to(userToCall.toString()).emit("call-made", { signal: signalData, from, name });
   });
@@ -98,7 +98,7 @@ io.on("connection", (socket) => {
     io.to(to.toString()).emit("call-ended");
   });
 
-  // Disconnect
+  // disconnect
   socket.on("disconnect", () => {
     for (let userId in onlineUsers) {
       if (onlineUsers[userId] === socket.id) {
@@ -110,7 +110,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// ─── START ────────────────────────────────────────────────
+// ─── shuru ────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🔥 DevTrust server running at http://localhost:${PORT}`);

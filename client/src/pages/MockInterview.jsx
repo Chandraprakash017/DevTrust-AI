@@ -5,7 +5,7 @@ import api from "../utils/api";
 import toast from "react-hot-toast";
 
 export default function MockInterview() {
-  const [step, setStep] = useState(0); // 0: Start, 1: Interview, 2: Feedback
+  const [step, setStep] = useState(0); // 0: shuru, 1: interview, 2: feedback
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState("Frontend Developer");
   const [skills, setSkills] = useState("React, JavaScript, CSS");
@@ -45,7 +45,7 @@ export default function MockInterview() {
       setHistory([...history, { q: interviewData.question, a: answer, f: res.data.feedback }]);
       setInterviewData(res.data);
       setAnswer("");
-      if (history.length >= 4) setStep(2); // End after 5 questions
+      if (history.length >= 4) setStep(2); // 5 sawalo ke baad khatam karo
     } catch (err) {
       toast.error("Submission failed.");
     } finally {

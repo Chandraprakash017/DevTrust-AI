@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 require("dotenv").config();
 
-// Initialize Gemini if API key exists
+// agar api key hai to gemini start karo
 const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
 
 /**
@@ -71,7 +71,7 @@ const aiService = {
       return JSON.parse(response.text());
     } catch (err) {
       console.error("AI Error:", err);
-      // Try to extract JSON if it was returned within text
+      // text se json nikalne ki koshish karo
       try {
         const text = err.message || "";
         const jsonMatch = text.match(/\{.*\}/s);

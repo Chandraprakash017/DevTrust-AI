@@ -16,10 +16,10 @@ const fraudService = {
     let isSuspicious = false;
     let reason = "";
 
-    // 1. SIMPLE RULE-BASED CHECKS
+    // 1. aasan rule wale check
     if (activityType === "message") {
-      // Check for rapid messaging (spam)
-      // (This would ideally query the DB for message count in the last minute)
+      // jaldi message aane par check (spam)
+      // (ideal tarike se 1 minute ke message count db me dekhne chahiye)
       if (metadata.count > 20) {
         isSuspicious = true;
         severity = "medium";
@@ -35,7 +35,7 @@ const fraudService = {
       }
     }
 
-    // 2. AI-POWERED ANALYSIS (If available)
+    // 2. ai se check (agar hai to)
     if (genAI && activityType === "message") {
       try {
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
@@ -55,7 +55,7 @@ const fraudService = {
       }
     }
 
-    // 3. LOG ALERT IF SUSPICIOUS
+    // 3. gadbad lage to alert log karo
     if (isSuspicious) {
       db.query(
         "INSERT INTO fraud_alerts (user_id, type, severity, description, status) VALUES (?, ?, ?, ?, 'pending')",

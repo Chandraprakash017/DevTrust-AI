@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-// GET ALL TRAININGS
+// saari trainings laao
 exports.getTrainings = (req, res) => {
   db.query("SELECT * FROM trainings ORDER BY id DESC", (err, result) => {
     if (err) return res.status(500).json(err);
@@ -8,7 +8,7 @@ exports.getTrainings = (req, res) => {
   });
 };
 
-// ADD TRAINING
+// training jodo
 exports.addTraining = (req, res) => {
   const { title, description, level } = req.body;
 
@@ -24,7 +24,7 @@ exports.addTraining = (req, res) => {
   );
 };
 
-// DELETE TRAINING
+// training hatao
 exports.deleteTraining = (req, res) => {
   const { id } = req.params;
 

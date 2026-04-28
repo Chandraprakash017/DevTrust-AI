@@ -46,13 +46,13 @@ export default function Payment() {
 
     setProcessing(true);
     try {
-      // Create mock order
+      // nakli order banao
       await api.post("/api/payment/create-order", { amount: selected.price });
 
-      // Simulate processing delay
+      // thoda delay dikhao
       await new Promise((r) => setTimeout(r, 2000));
 
-      // Save earning / payment record
+      // earning / payment ka record save karo
       await api.post("/api/payment/verify", {
         user_id: user.id,
         amount: selected.price,
