@@ -6,8 +6,8 @@ let isMock = false;
 // memory mein storage (mock mode ke liye)
 const memoryStore = {
   users: [
-    { id: 1, name: "Admin", email: "admin@gmail.com", password: "", role: "admin", plan: "pro", skills: "[]", reputation_score: 5.0 },
-    { id: 2, name: "Chandra", email: "chan@gmail.com", password: "", role: "freelancer", plan: "free", skills: "[\"React\", \"Node.js\", \"UI Design\"]", reputation_score: 4.8 },
+    { id: 1, name: "Admin", email: "admin@gmail.com", password: "$2a$10$WqU2o881.h.A85y.K0wG6OpfW.qX9m61qM0Z6Hq.3o2q0V2c5v5F.", role: "admin", plan: "pro", skills: "[]", reputation_score: 5.0 },
+    { id: 2, name: "Chandra", email: "chan@gmail.com", password: "$2a$10$WqU2o881.h.A85y.K0wG6OpfW.qX9m61qM0Z6Hq.3o2q0V2c5v5F.", role: "freelancer", plan: "free", skills: "[\"React\", \"Node.js\", \"UI Design\"]", reputation_score: 4.8 },
   ],
   subscriptions: [],
   tasks: [
