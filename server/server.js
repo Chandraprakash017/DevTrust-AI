@@ -7,11 +7,30 @@ require("dotenv").config();
 
 const app = express();
 
+const normalizeUrl = (url) => url ? url.replace(/\/$/, "") : "";
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "http://localhost:5176",
+  "http://localhost:3000"
+].map(normalizeUrl);
+
+if (process.env.FRONTEND_URL) {
+  const envOrigins = process.env.FRONTEND_URL.split(",").map(url => normalizeUrl(url.trim()));
+  allowedOrigins.push(...envOrigins);
+}
+
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps, curl, postman)
     if (!origin) return callback(null, true);
-    return callback(null, true);
+    const normalizedOrigin = normalizeUrl(origin);
+    if (allowedOrigins.includes(normalizedOrigin) || allowedOrigins.includes("*")) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
 }));
@@ -51,7 +70,14 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: (origin, callback) => callback(null, true),
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const normalizedOrigin = normalizeUrl(origin);
+      if (allowedOrigins.includes(normalizedOrigin) || allowedOrigins.includes("*")) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   },
 });
