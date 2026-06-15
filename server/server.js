@@ -8,7 +8,11 @@ require("dotenv").config();
 const app = express();
 
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, "http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176", "http://localhost:3000"].filter(Boolean),
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, postman)
+    if (!origin) return callback(null, true);
+    return callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json());
@@ -46,7 +50,10 @@ app.get("/", (req, res) => res.json({ status: "✅ DevTrust API running" }));
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: {
+    origin: (origin, callback) => callback(null, true),
+    credentials: true,
+  },
 });
 
 // online users rakho: { userId: socketId }
