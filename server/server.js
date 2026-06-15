@@ -14,7 +14,8 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:5175",
   "http://localhost:5176",
-  "http://localhost:3000"
+  "http://localhost:3000",
+  "https://devtrustai.vercel.app"
 ].map(normalizeUrl);
 
 if (process.env.FRONTEND_URL) {
@@ -38,29 +39,29 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ─── raste ──────────────────────────────────────────────
-const authRoutes         = require("./routes/authRoutes");
-const userRoutes         = require("./routes/userRoutes");
-const messageRoutes      = require("./routes/messageRoutes");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
-const earningRoutes      = require("./routes/earningRoutes");
-const paymentRoutes      = require("./routes/paymentRoutes");
-const taskRoutes         = require("./routes/taskRoutes");
-const trainingRoutes     = require("./routes/trainingRoutes");
+const earningRoutes = require("./routes/earningRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const trainingRoutes = require("./routes/trainingRoutes");
 const verificationRoutes = require("./routes/verificationRoutes");
-const aiRoutes           = require("./routes/aiRoutes");
-const reviewRoutes       = require("./routes/reviewRoutes");
+const aiRoutes = require("./routes/aiRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
-app.use("/api/auth",          authRoutes);
-app.use("/api/users",         userRoutes);
-app.use("/api/messages",      messageRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
-app.use("/api/earnings",      earningRoutes);
-app.use("/api/payment",       paymentRoutes);
-app.use("/api/tasks",         taskRoutes);
-app.use("/api/trainings",     trainingRoutes);
-app.use("/api/verify",        verificationRoutes);
-app.use("/api/ai",            aiRoutes);
-app.use("/api/reviews",       reviewRoutes);
+app.use("/api/earnings", earningRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/trainings", trainingRoutes);
+app.use("/api/verify", verificationRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // ─── health check ───────────────────────────────────
 app.get("/", (req, res) => res.json({ status: "✅ DevTrust API running" }));
