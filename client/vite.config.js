@@ -8,10 +8,10 @@ export default defineConfig({
     global: 'globalThis',
   },
   server: {
-    port: 5173,
+    port: 5176,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5001',
         changeOrigin: true,
       }
     }

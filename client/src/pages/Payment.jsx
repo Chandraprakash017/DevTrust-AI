@@ -35,14 +35,21 @@ export default function Payment() {
   const [selected, setSelected] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [payMethod, setPayMethod] = useState("card"); // "card" | "upi"
   const [cardNum, setCardNum] = useState("");
   const [cardName, setCardName] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
+  const [upiId, setUpiId] = useState("");
 
   const pay = async () => {
-    if (!cardNum || !cardName || !expiry || !cvv) return toast.error("Please fill all card details");
-    if (cardNum.replace(/\s/g, "").length < 12) return toast.error("Invalid card number");
+    if (payMethod === "card") {
+      if (!cardNum || !cardName || !expiry || !cvv) return toast.error("Please fill all card details");
+      if (cardNum.replace(/\s/g, "").length < 12) return toast.error("Invalid card number");
+    } else {
+      if (!upiId) return toast.error("Please enter a UPI ID");
+      if (!upiId.includes("@")) return toast.error("Invalid UPI ID format");
+    }
 
     setProcessing(true);
     try {
@@ -56,7 +63,7 @@ export default function Payment() {
       await api.post("/api/payment/verify", {
         user_id: user.id,
         amount: selected.price,
-        source: `${selected.name} Plan Subscription`,
+        source: `${selected.name} Plan Subscription (${payMethod.toUpperCase()})`,
       });
 
       setSuccess(true);
@@ -144,55 +151,105 @@ export default function Payment() {
                   ← Back to plans
                 </button>
 
-                <h2 className="text-xl font-bold mb-1">💳 Card Payment</h2>
+                <h2 className="text-xl font-bold mb-1">💳 Complete Payment</h2>
                 <p className="text-sm text-gray-400 mb-5">
                   Paying <span className="font-semibold text-purple-600">₹{selected.price}</span> for {selected.name} Plan
                 </p>
 
-                {/* Mock Card UI */}
-                <div className={`bg-gradient-to-br ${selected.color} text-white rounded-2xl p-5 mb-6 shadow-xl`}>
-                  <p className="text-xs opacity-70 mb-3">CARD NUMBER</p>
-                  <p className="font-mono tracking-widest text-lg">{cardNum || "•••• •••• •••• ••••"}</p>
-                  <div className="flex justify-between mt-4 text-xs opacity-70">
-                    <span>{cardName || "CARDHOLDER NAME"}</span>
-                    <span>{expiry || "MM/YY"}</span>
-                  </div>
+                {/* Tab selector */}
+                <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-xl mb-5">
+                  <button
+                    type="button"
+                    onClick={() => setPayMethod("card")}
+                    className={`flex-1 py-2 rounded-lg font-bold text-xs transition-all ${
+                      payMethod === "card"
+                        ? "bg-purple-600 text-white shadow"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    Card Payment
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPayMethod("upi")}
+                    className={`flex-1 py-2 rounded-lg font-bold text-xs transition-all ${
+                      payMethod === "upi"
+                        ? "bg-purple-600 text-white shadow"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    UPI Payment
+                  </button>
                 </div>
 
-                <div className="space-y-3">
-                  <input
-                    placeholder="Card Number"
-                    value={cardNum}
-                    onChange={(e) => setCardNum(formatCard(e.target.value))}
-                    className={inputClass}
-                    maxLength={19}
-                  />
-                  <input
-                    placeholder="Cardholder Name"
-                    value={cardName}
-                    onChange={(e) => setCardName(e.target.value.toUpperCase())}
-                    className={inputClass}
-                  />
-                  <div className="grid grid-cols-2 gap-3">
+                {payMethod === "card" ? (
+                  <>
+                    {/* Mock Card UI */}
+                    <div className={`bg-gradient-to-br ${selected.color} text-white rounded-2xl p-5 mb-6 shadow-xl`}>
+                      <p className="text-xs opacity-70 mb-3">CARD NUMBER</p>
+                      <p className="font-mono tracking-widest text-lg">{cardNum || "•••• •••• •••• ••••"}</p>
+                      <div className="flex justify-between mt-4 text-xs opacity-70">
+                        <span>{cardName || "CARDHOLDER NAME"}</span>
+                        <span>{expiry || "MM/YY"}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <input
+                        placeholder="Card Number"
+                        value={cardNum}
+                        onChange={(e) => setCardNum(formatCard(e.target.value))}
+                        className={inputClass}
+                        maxLength={19}
+                      />
+                      <input
+                        placeholder="Cardholder Name"
+                        value={cardName}
+                        onChange={(e) => setCardName(e.target.value.toUpperCase())}
+                        className={inputClass}
+                      />
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          placeholder="MM/YY"
+                          value={expiry}
+                          onChange={(e) => {
+                            let v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                            if (v.length >= 2) v = v.slice(0, 2) + "/" + v.slice(2);
+                            setExpiry(v);
+                          }}
+                          className={inputClass}
+                        />
+                        <input
+                          placeholder="CVV"
+                          type="password"
+                          value={cvv}
+                          onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                          className={inputClass}
+                        />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border dark:border-gray-600 rounded-2xl flex flex-col items-center">
+                      <div className="w-28 h-28 bg-white rounded-xl flex items-center justify-center p-2 mb-2 shadow-sm border">
+                        <img
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=devtrust@okaxis%26pn=DevTrust%26am=${selected.price}%26cu=INR`}
+                          alt="UPI QR Code"
+                          className="w-full h-full"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-bold">Scan QR code using GPay/PhonePe/Paytm</p>
+                    </div>
+
                     <input
-                      placeholder="MM/YY"
-                      value={expiry}
-                      onChange={(e) => {
-                        let v = e.target.value.replace(/\D/g, "").slice(0, 4);
-                        if (v.length >= 2) v = v.slice(0, 2) + "/" + v.slice(2);
-                        setExpiry(v);
-                      }}
-                      className={inputClass}
-                    />
-                    <input
-                      placeholder="CVV"
-                      type="password"
-                      value={cvv}
-                      onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                      placeholder="Enter UPI ID (e.g. name@okaxis)"
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
                       className={inputClass}
                     />
                   </div>
-                </div>
+                )}
 
                 <button
                   onClick={pay}

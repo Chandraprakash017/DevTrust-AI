@@ -11,6 +11,7 @@ const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GE
 const mockResponse = (type, input) => {
   const responses = {
     resume: {
+      score: 85,
       summary: "Highly skilled professional with expertise in Web Development and React.",
       skills: ["React", "Node.js", "Express", "MySQL", "JavaScript", "CSS"],
       improvements: [
@@ -18,7 +19,9 @@ const mockResponse = (type, input) => {
         "Include links to your GitHub or Portfolio.",
         "Quantify your achievements (e.g., 'Improved performance by 20%')."
       ],
-      career_paths: ["Full Stack Developer", "Frontend Engineer", "Backend Developer"]
+      career_paths: ["Full Stack Developer", "Frontend Engineer", "Backend Developer"],
+      keyword_matches: ["React", "Node.js", "MySQL", "JavaScript", "CSS"],
+      missing_keywords: ["Docker", "Kubernetes", "AWS", "TypeScript"]
     },
     recommendation: {
       score: 85,

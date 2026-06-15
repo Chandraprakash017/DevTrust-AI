@@ -23,6 +23,9 @@ const memoryStore = {
   trainings: [],
   verification: [],
   invoices: [],
+  notifications: [
+    { id: 1, user_id: 2, message: "🌟 Welcome to DevTrust! Explore jobs and verify your profile.", created_at: new Date() }
+  ],
 };
 
 // asli mysql start karo
@@ -46,14 +49,14 @@ pool.connect((err) => {
         const cleaned = sql.toLowerCase().trim();
         
         // nakli auth (email check)
-        if (cleaned.includes("from users where email =")) {
+        if (cleaned.includes("from users where email")) {
           const emailToFind = params[0].toLowerCase();
           const u = memoryStore.users.find(x => x.email.toLowerCase() === emailToFind);
           return callback(null, u ? [u] : []);
         }
         
         // nakli profile (id check)
-        if (cleaned.includes("from users where id =")) {
+        if (cleaned.includes("from users where id")) {
           const idToFind = params[0];
           const u = memoryStore.users.find(x => x.id == idToFind);
           return callback(null, u ? [u] : []);
@@ -90,9 +93,78 @@ pool.connect((err) => {
         }
 
         // nakli earnings
-        if (cleaned.includes("from earnings where user_id =")) {
-          const userEarnings = memoryStore.earnings.filter(e => e.user_id == params[0]);
+        if (cleaned.includes("from earnings")) {
+          const userId = params[0];
+          const userEarnings = userId 
+            ? memoryStore.earnings.filter(e => e.user_id == userId) 
+            : memoryStore.earnings;
           return callback(null, userEarnings);
+        }
+
+        // nakli notifications (select)
+        if (cleaned.includes("from notifications")) {
+          const userId = params[0];
+          const userNotis = userId 
+            ? memoryStore.notifications.filter(n => n.user_id == userId) 
+            : memoryStore.notifications;
+          return callback(null, userNotis);
+        }
+
+        // nakli notifications (insert)
+        if (cleaned.startsWith("insert into notifications")) {
+          const [userId, message] = params;
+          const newNoti = {
+            id: Date.now(),
+            user_id: userId,
+            message,
+            created_at: new Date()
+          };
+          memoryStore.notifications.push(newNoti);
+          return callback(null, { insertId: newNoti.id });
+        }
+
+        // nakli trainings (select)
+        if (cleaned.includes("from trainings")) {
+          return callback(null, memoryStore.trainings);
+        }
+
+        // nakli trainings (insert)
+        if (cleaned.startsWith("insert into trainings")) {
+          const [title, description, level] = params;
+          const newTraining = {
+            id: Date.now(),
+            title,
+            description,
+            level,
+            created_at: new Date()
+          };
+          memoryStore.trainings.push(newTraining);
+          return callback(null, { insertId: newTraining.id });
+        }
+
+        // nakli trainings (delete)
+        if (cleaned.startsWith("delete from trainings")) {
+          const idToDelete = params[0];
+          memoryStore.trainings = memoryStore.trainings.filter(t => t.id != idToDelete);
+          return callback(null, { affectedRows: 1 });
+        }
+
+        // nakli tasks (insert)
+        if (cleaned.startsWith("insert into tasks")) {
+          const [title, description, reward, difficulty, required_skills, tags] = params;
+          const newTask = {
+            id: Date.now(),
+            title,
+            description,
+            reward: parseFloat(reward || 0),
+            difficulty,
+            required_skills,
+            tags,
+            status: 'open',
+            created_at: new Date()
+          };
+          memoryStore.tasks.push(newTask);
+          return callback(null, { insertId: newTask.id });
         }
 
         // aam success

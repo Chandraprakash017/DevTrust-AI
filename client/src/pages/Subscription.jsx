@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Check, Sparkles, Zap, Shield, Rocket } from "lucide-react";
 import api from "../utils/api";
 import toast from "react-hot-toast";
@@ -62,17 +62,42 @@ const PricingCard = ({ title, price, features, isPro, onUpgrade, isLoading }) =>
 
 export default function Subscription() {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPayModal, setShowPayModal] = useState(false);
+  const [payMethod, setPayMethod] = useState("card"); // "card" | "upi"
+  const [cardName, setCardName] = useState("");
+  const [cardNum, setCardNum] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [upiId, setUpiId] = useState("");
+
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const handleUpgrade = async () => {
+    if (payMethod === "card") {
+      if (!cardNum || !cardName || !expiry || !cvv) {
+        toast.error("Please fill all card details");
+        return;
+      }
+    } else {
+      if (!upiId) {
+        toast.error("Please enter a UPI ID");
+        return;
+      }
+      if (!upiId.includes("@")) {
+        toast.error("Invalid UPI ID format");
+        return;
+      }
+    }
+
     setIsLoading(true);
     try {
       // nakli payment aur subscription
       const res = await api.post("/api/payment/subscribe", {
         user_id: user.id,
         amount: 499,
-        plan: "pro"
+        plan: "pro",
+        transaction_id: payMethod === "card" ? "mock_card_" + Date.now() : "mock_upi_" + Date.now()
       });
 
       if (res.data.success) {
@@ -80,7 +105,7 @@ export default function Subscription() {
         // local storage me user update karo
         const updatedUser = { ...user, plan: "pro" };
         localStorage.setItem("user", JSON.stringify(updatedUser));
-        
+        setShowPayModal(false);
         setTimeout(() => {
           navigate("/freelancer");
         }, 1500);
@@ -151,7 +176,7 @@ export default function Subscription() {
               "Verified Pro Badge"
             ]}
             isPro={true}
-            onUpgrade={handleUpgrade}
+            onUpgrade={() => setShowPayModal(true)}
             isLoading={isLoading}
           />
         </div>
@@ -171,6 +196,145 @@ export default function Subscription() {
           </div>
         </motion.div>
       </div>
+
+      {/* PAYMENT MODAL */}
+      <AnimatePresence>
+        {showPayModal && (
+          <motion.div
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xl z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-gray-950 border border-white/10 rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl relative"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+            >
+              <button 
+                onClick={() => setShowPayModal(false)}
+                className="absolute top-6 right-6 text-gray-400 hover:text-white text-xl"
+              >
+                ✕
+              </button>
+
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-black text-white">Upgrade to Pro</h2>
+                <p className="text-gray-400 text-sm mt-1">Completing payment of ₹499/month</p>
+              </div>
+
+              {/* Payment Method Selector */}
+              <div className="flex gap-2 p-1.5 bg-white/5 border border-white/10 rounded-2xl mb-6">
+                <button
+                  type="button"
+                  onClick={() => setPayMethod("card")}
+                  className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${
+                    payMethod === "card"
+                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  💳 Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPayMethod("upi")}
+                  className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${
+                    payMethod === "upi"
+                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  📱 UPI
+                </button>
+              </div>
+
+              {payMethod === "card" ? (
+                <div className="space-y-4 mb-6">
+                  <input
+                    type="text"
+                    placeholder="Card Number"
+                    value={cardNum}
+                    onChange={(e) => {
+                      let v = e.target.value.replace(/\D/g, "").slice(0, 16);
+                      v = v.replace(/(.{4})/g, "$1 ").trim();
+                      setCardNum(v);
+                    }}
+                    className="w-full p-4 border border-white/10 rounded-2xl bg-black/40 text-white outline-none focus:border-purple-500/50 text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Cardholder Name"
+                    value={cardName}
+                    onChange={(e) => setCardName(e.target.value.toUpperCase())}
+                    className="w-full p-4 border border-white/10 rounded-2xl bg-black/40 text-white outline-none focus:border-purple-500/50 text-sm"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      placeholder="MM/YY"
+                      value={expiry}
+                      onChange={(e) => {
+                        let v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                        if (v.length >= 2) v = v.slice(0, 2) + "/" + v.slice(2);
+                        setExpiry(v);
+                      }}
+                      className="w-full p-4 border border-white/10 rounded-2xl bg-black/40 text-white outline-none focus:border-purple-500/50 text-sm"
+                    />
+                    <input
+                      type="password"
+                      placeholder="CVV"
+                      value={cvv}
+                      onChange={(e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                      className="w-full p-4 border border-white/10 rounded-2xl bg-black/40 text-white outline-none focus:border-purple-500/50 text-sm"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 mb-6 text-center">
+                  <div className="p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center">
+                    {/* Mock QR Code Icon */}
+                    <div className="w-32 h-32 bg-white rounded-xl flex items-center justify-center p-2 mb-3">
+                      <img
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=devtrust@okaxis%26pn=DevTrust%26am=499%26cu=INR"
+                        alt="UPI QR Code"
+                        className="w-full h-full"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 font-bold">Scan QR code using any UPI App</p>
+                  </div>
+                  <div className="text-left">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest block ml-1 mb-2">Or enter UPI ID</label>
+                    <input
+                      type="text"
+                      placeholder="username@bank"
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
+                      className="w-full p-4 border border-white/10 rounded-2xl bg-black/40 text-white outline-none focus:border-purple-500/50 text-sm"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={handleUpgrade}
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white p-5 rounded-2xl font-black text-lg hover:shadow-xl hover:shadow-purple-500/20 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <span>Complete Payment</span>
+                )}
+              </button>
+
+              <p className="text-center text-xs text-gray-500 mt-4">🔒 Simulated secure transaction · No real charges</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
