@@ -11,24 +11,3 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20
-      - key: FRONTEND_URL
-        fromService:
-          name: devtrust-frontend
-          type: static
-          property: url
-
-  # Frontend Static Site
-  - type: static
-    name: devtrust-frontend
-    env: static
-    plan: free
-    region: ohio
-    buildCommand: npm install && npm run build
-    publishPath: dist
-    rootDirectory: client
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          name: devtrust-api
-          type: web
-          property: url
